@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jimmy钓鱼机 - 官方网站</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #93D5DC;
+            color: #303;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #12AA9C, #C06F98);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            margin: 10px 0 0;
+            animation: fadeIn 2.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        nav {
+            background-color: #333;
+            overflow: hidden;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        nav a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #4CAF50;
+        }
+
+        .container {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .game-intro, .features, .screenshots, .testimonials, .download {
+            margin-bottom: 60px;
+        }
+
+        .game-intro p, .features ul, .testimonials .quote {
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .features ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .features ul li {
+            background: #e0f7fa;
+            margin: 10px 0;
+            padding: 15px;
+            border-left: 5px solid #4CAF50;
+            border-radius: 5px;
+            transition: transform 0.3s ease;
+        }
+
+        .features ul li:hover {
+            transform: translateX(10px);
+        }
+
+        .screenshots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .screenshots img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .screenshots img:hover {
+            transform: scale(1.05);
+        }
+
+        .testimonials .quote {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .testimonials .quote p {
+            margin: 0;
+        }
+
+        .testimonials .quote .author {
+            font-weight: bold;
+            color: #4CAF50;
+            margin-top: 10px;
+            display: block;
+        }
+
+        .download {
+            text-align: center;
+        }
+
+        .download a {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            transition: background 0.3s ease;
+        }
+
+        .download a:hover {
+            background-color: #45a049;
+        }
+
+        footer {
+            background-color: #C3D7DF;
+            color: #440E25;
+            text-align: center;
+            padding: 20px;
+            margin-top: 60px;
+        }
+
+        footer .social-links a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        footer .social-links a:hover {
+            color: #4CAF50;
+        }
+    /* 新增样式 */
+        #canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        section.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .nav-indicator {
+            height: 3px;
+            background: #4CAF50;
+            position: absolute;
+            bottom: 0;
+            transition: all 0.3s ease;
+        }
+
+        .features ul li:hover {
+            box-shadow: 0 8px 20px rgba(76,175,80,0.3);
+        }
+
+        .download a {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .download a::after {
+            content: '➜';
+            position: absolute;
+            right: -20px;
+            transition: all 0.4s ease;
+        }
+
+        .download a:hover {
+            padding-right: 50px;
+        }
+
+        .download a:hover::after {
+            right: 15px;
+        }
+
+        .social-links img {
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .social-links a:hover img {
+            transform: rotate(15deg) scale(1.2);
+            filter: drop-shadow(0 4px 8px rgba(76,175,80,0.5));
+        }
+    </style>
+</head>
+<body>
+<!-- 新增粒子特效容器 -->
+    <canvas id="canvas-bg"></canvas>
+<header>
+    <h1>Jimmy钓鱼机</h1>
+    <p>欢迎来到Jimmy钓鱼机的官方网站！</p>
+</header>
+
+<nav>
+    <a href="#intro">游戏介绍</a>
+    <a href="#features">游戏特色</a>
+    <a href="#screenshots">游戏截图</a>
+    <a href="#testimonials">玩家评价</a>
+    <a href="#download">下载方式</a>
+</nav>
+
+<div class="container">
+    <section id="intro" class="game-intro">
+        <h2>游戏介绍</h2>
+        <p>欢迎游玩Jimmy钓鱼机！</p>
+
+<h3>版权声明</h3>
+<p>© 2026 新洲一中阳逻校区小班版权所有<br />
+特别鸣谢：Jimmy的支持及一班全体同学的协力开发</p>
+
+<h3>核心玩法说明</h3>
+
+<h4>1. 钓鱼模式</h4>
+<ul>
+    <li><strong>PC端通用操作</strong>：左右方向键移动（长按持续移动），Enter键下钩</li>
+    <li><strong>触屏(希沃白板)操作</strong>：点击屏幕左右侧移动，点击Jimmy图标下钩</li>
+</ul>
+
+<h4>2. 飞镖挑战</h4>
+<p>发射飞镖打中目标得分，注意避开小马（击中会扣分）</p>
+
+<h4>3. PvP对战模式</h4>
+<h5>基础操作方式</h5>
+<ul>
+    <li><strong>WASD</strong>：
+        <ul>
+            <li>移动：W/A/S/D</li>
+            <li>横激光：E | 纵激光：C</li>
+            <li>防御：Q | 开炮：X</li>
+        </ul>
+    </li>
+    <li><strong>方向键</strong>：
+        <ul>
+            <li>移动：↑/↓/←/→</li>
+            <li>横激光：PageUp | 纵激光：PageDown</li>
+            <li>防御：右Ctrl | 开炮：右Alt</li>
+        </ul>
+    </li>
+</ul>
+
+<h5>P.S. 联机对战步骤</h5>
+<ol>
+    <li>双方协商确定：
+        <ul>
+            <li>角色分配（Jimmy/ZDY）</li>
+            <li>网络连接方式（主机/客户端）</li>
+        </ul>
+    </li>
+    <li>选择操作方式（选哪个操作方式与选的角色无关）</li>
+    <li>主机进入等待状态（显示为未响应属正常现象）</li>
+    <li>客户端输入主机显示的IP地址</li>
+    <li>连接成功后即可开始对战</li>
+</ol>
+
+<h4>4. 摸鱼机</h4>
+<ul>
+    <li><strong>移动控制</strong>：WASD/方向键</li>
+    <li><strong>核心机制</strong>：
+        <ul>
+            <li>收集鱼类增加负载，返家转换负载为分数</li>
+            <li>安全机制：在家无敌状态，可“退！！”水雷</li>
+        </ul>
+    </li>
+    <li><strong>危险提示</strong>：
+        <ul>
+            <li>水雷（移动型）：触碰扣1血</li>
+            <li>潜水艇（固定型）：直接送走</li>
+            <li>鲨鱼：重置生命值并强制返家</li>
+            <li>水草（边缘区域）：直接送走</li>
+        </ul>
+    </li>
+    <li><strong>增益道具</strong>：
+        <ul>
+            <li>金钟罩：加1血</li>
+            <li>增氧装置：增大人工鱼塘K值</li>
+        </ul>
+    </li>
+</ul>
+
+<h4>5. 娲石百货</h4>
+<p>好东西多多</p>
+
+<h3>重要须知</h3>
+<ul>
+    <li>本游戏严禁任何形式转载或二次发布</li>
+    <li>序列号获取：通过B站私信联系@Micropuppy</li>
+</ul>
+
+<p>按ESC键随时返回主菜单。</p>
+    </section>
+    <section id="features" class="features">
+        <h2>游戏特色</h2>
+        <ul>
+            <li>😝 抽象但具体的体验：丰富的帅照与阳光的表情比比皆是！</li>
+            <li>🎮 简单易上手的操作：适合所有年龄段的玩家！</li>
+            <li>🐔 麻雀虽小五脏俱全：该有的都有，且触手可得！</li>
+            <li>🎆 丰富而实用的商品：买吃喝，买纸飞机，卖鱼得钱！</li>
+            <li>🏆 充满趣味的小游戏：钓鱼飞镖，摸鱼PvP！</li>
+        </ul>
+    </section>
+
+    <section id="screenshots" class="screenshots">
+        <h2>游戏截图</h2>
+        <img src="/img/intro.jpg" alt="主界面">
+        <img src="/img/funct.jpg" alt="功能页">
+        <img src="/img/shop.jpg" alt="商店页">
+        <img src="/img/cus.jpg" alt="自定义面板">
+        <img src="/img/fish.jpg" alt="钓鱼">
+        <img src="/img/plane.jpg" alt="飞镖 1">
+        <img src="/img/xiaoma.jpg" alt="飞镖 2">
+        <img src="/img/pvp.jpg" alt="PvP 1">
+        <img src="/img/pvppao.jpg" alt="PvP 2">
+        <img src="/img/moyuji.jpg" alt="摸鱼机 1">
+        <img src="/img/selectm.jpg" alt="摸鱼机 2">
+        <img src="/img/gaming.jpg" alt="摸鱼机 3">
+    </section>
+
+    <section id="testimonials" class="testimonials">
+        <h2>玩家评价</h2>
+        <div class="quote">
+            <p>“哈哈哈哈哈哈哈哈哈哈哈……”</p>
+            <span class="author">—— 朱航</span>
+        </div>
+        <div class="quote">
+            <p>“6”</p>
+            <span class="author">—— Kira</span>
+        </div>
+        <div class="quote">
+            <p>“太有实力了”</p>
+            <span class="author">—— Nomo.</span>
+        </div>
+    </section>
+
+    <section id="download" class="download">
+        <h2>下载方式</h2>
+        <p>立即下载《Jimmy钓鱼机》，开始与2026届小班互动！</p>
+        <a href="https://github.com/MicropuppyGoForward/Jimmy/releases" download>点击这里下载</a>
+    </section>
+</div>
+
+<footer>
+    <p>&copy; 2025 Micropuppy. 版权所有.</p>
+    <div class="social-links">
+        <a href="https://user.qzone.qq.com/190201740/main" target="_blank"><img src="/img/qzone.jpg" alt="QQ空间"></a>
+        <a href="https://github.com/MicropuppyGoForward/Jimmy" target="_blank"><img src="/img/github.jpg" alt="GitHub"></a>
+    </div>
+</footer>
+<!-- 新增脚本 -->
+<script>
+        // 金色粒子特效
+        class Particle {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.particles = [];
+                this.init();
+            }
+
+            init() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                
+                // 粒子参数设置
+                for(let i = 0; i < 150; i++) {
+                    this.particles.push({
+                        x: Math.random() * this.canvas.width,
+                        y: Math.random() * this.canvas.height,
+                        size: Math.random() * 2.5 + 0.5,
+                        speedX: (Math.random() - 0.5) * 0.4,
+                        speedY: (Math.random() - 0.5) * 0.4
+                    });
+                }
+                this.animate();
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            animate() {
+                // 填充背景色
+                this.ctx.fillStyle = '#93D5DC';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.particles.forEach(particle => {
+                    // 更新位置
+                    particle.x += particle.speedX;
+                    particle.y += particle.speedY;
+
+                    // 边界反弹
+                    if(particle.x < 0 || particle.x > this.canvas.width) particle.speedX *= -1;
+                    if(particle.y < 0 || particle.y > this.canvas.height) particle.speedY *= -1;
+
+                    // 创建渐变效果
+                    const gradient = this.ctx.createRadialGradient(
+                        particle.x, particle.y, 0,
+                        particle.x, particle.y, particle.size * 2
+                    );
+                    gradient.addColorStop(0, 'rgba(255,215,50,0.8)');
+                    gradient.addColorStop(1, 'rgba(255,215,50,0.1)');
+
+                    // 绘制粒子
+                    this.ctx.beginPath();
+                    this.ctx.fillStyle = gradient;
+                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                });
+
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // 初始化特效
+        window.addEventListener('DOMContentLoaded', () => {
+            // 启动粒子系统
+            new Particle(document.getElementById('canvas-bg'));
+
+            // 章节滚动动画
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            document.querySelectorAll('section').forEach(section => {
+                observer.observe(section);
+            });
+
+            // 导航指示器
+            const navLinks = document.querySelectorAll('nav a');
+            const indicator = document.createElement('div');
+            indicator.className = 'nav-indicator';
+            document.querySelector('nav').appendChild(indicator);
+
+            function updateIndicator() {
+                const activeLink = [...navLinks].find(link => 
+                    link.getAttribute('href') === `#${location.hash.slice(1)}`
+                );
+                
+                if(activeLink) {
+                    indicator.style.width = `${activeLink.offsetWidth}px`;
+                    indicator.style.left = `${activeLink.offsetLeft}px`;
+                }
+            }
+
+            navLinks.forEach(link => link.addEventListener('click', updateIndicator));
+            window.addEventListener('hashchange', updateIndicator);
+            updateIndicator();
+        });
+    </script>
+</body>
+</html>
