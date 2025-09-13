@@ -20,6 +20,7 @@
             padding: 60px 20px;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
 
         header h1 {
@@ -46,11 +47,11 @@
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
         }
 
         nav a {
-            float: left;
-            display: block;
             color: white;
             text-align: center;
             padding: 14px 20px;
@@ -104,23 +105,52 @@
 
         .screenshots {
             display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
+            overflow-x: auto;
+            padding: 20px 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #4CAF50 #e0f7fa;
+            gap: 15px;
+            -webkit-overflow-scrolling: touch;
+            white-space: nowrap;
+            flex-wrap: nowrap;
+            margin: 0 -10px;
         }
 
+            /* Webkit浏览器的滚动条样式 */
+            .screenshots::-webkit-scrollbar {
+                height: 8px;
+            }
+
+            .screenshots::-webkit-scrollbar-track {
+                background: #e0f7fa;
+                border-radius: 10px;
+            }
+
+            .screenshots::-webkit-scrollbar-thumb {
+                background: #4CAF50;
+                border-radius: 10px;
+            }
+
+        /* 修改截图容器样式 */
+        .screenshot-container {
+            flex: 0 0 auto;
+            display: inline-block;
+            width: 220px;
+        }
+
+        /* 修改图片样式 */
         .screenshots img {
-            width: 100%;
-            max-width: 300px;
-            height: auto;
-            border-radius: 10px;
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
         }
 
-        .screenshots img:hover {
-            transform: scale(1.05);
-        }
+            .screenshots img:hover {
+                transform: scale(1.05);
+            }
 
         .testimonials .quote {
             background: #fff;
@@ -154,6 +184,7 @@
             border-radius: 5px;
             font-size: 1.2rem;
             transition: background 0.3s ease;
+            margin: 10px;
         }
 
         .download a:hover {
@@ -179,7 +210,8 @@
         footer .social-links a:hover {
             color: #4CAF50;
         }
-    /* 新增样式 */
+        
+        /* 新增样式 */
         #canvas-bg {
             position: fixed;
             top: 0;
@@ -234,282 +266,679 @@
         .social-links img {
             transition: all 0.3s ease;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            width: 32px;
+            height: 32px;
         }
 
         .social-links a:hover img {
             transform: rotate(15deg) scale(1.2);
             filter: drop-shadow(0 4px 8px rgba(76,175,80,0.5));
         }
+        
+        /* 语言切换按钮 */
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+        }
+        
+        .language-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .language-btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        /* 图片模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            padding-top: 50px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+        }
+        
+        .modal-content {
+            display: block;
+            margin: 0 auto;
+            max-width: 90%;
+            max-height: 80vh;
+            border-radius: 5px;
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            text-align: center;
+            color: #ccc;
+            padding: 10px 0;
+            height: 150px;
+        }
     </style>
 </head>
 <body>
 <!-- 新增粒子特效容器 -->
     <canvas id="canvas-bg"></canvas>
+    
+    <!-- 语言切换按钮 -->
+    <div class="language-switcher">
+        <button class="language-btn" id="languageBtn">English</button>
+    </div>
+
 <header>
-    <h1>Jimmy钓鱼机</h1>
-    <p>欢迎来到Jimmy钓鱼机的官方网站！</p>
+    <h1 data-lang="title">Jimmy钓鱼机</h1>
+    <p data-lang="welcome">欢迎来到Jimmy钓鱼机的官方网站！</p>
 </header>
 
 <nav>
-    <a href="#intro">游戏介绍</a>
-    <a href="#features">游戏特色</a>
-    <a href="#screenshots">游戏截图</a>
-    <a href="#testimonials">玩家评价</a>
-    <a href="#download">下载方式</a>
+    <a href="#intro" data-lang="nav-intro">游戏介绍</a>
+    <a href="#features" data-lang="nav-features">游戏特色</a>
+    <a href="#screenshots" data-lang="nav-screenshots">游戏截图</a>
+    <a href="#testimonials" data-lang="nav-testimonials">玩家评价</a>
+    <a href="#download" data-lang="nav-download">下载方式</a>
 </nav>
 
 <div class="container">
     <section id="intro" class="game-intro">
-        <h2>游戏介绍</h2>
-        <p>欢迎游玩Jimmy钓鱼机！</p>
+        <section id="intro" class="game-intro">
+            <h2 data-lang="intro-title">游戏介绍</h2>
+            <p data-lang="intro-welcome">欢迎游玩Jimmy钓鱼机！</p>
 
-<h3>版权声明</h3>
-<p>© 2026 新洲一中阳逻校区小班版权所有<br />
-特别鸣谢：Jimmy的支持及一班全体同学的协力开发</p>
+            <h3 data-lang="intro-copyright">版权声明</h3>
+            <p data-lang="intro-copyright-text">
+                © 2026 新洲一中阳逻校区小班版权所有<br />
+                特别鸣谢：Jimmy的支持及一班全体同学的协力开发
+            </p>
 
-<h3>核心玩法说明</h3>
+            <h3 data-lang="intro-gameplay">核心玩法说明</h3>
 
-<h4>1. 钓鱼模式</h4>
-<ul>
-    <li><strong>PC端通用操作</strong>：左右方向键移动（长按持续移动），Enter键下钩</li>
-    <li><strong>触屏(希沃白板)操作</strong>：点击屏幕左右侧移动，点击Jimmy图标下钩</li>
-</ul>
+            <h4 data-lang="intro-fishing">1. 钓鱼模式</h4>
+            <ul>
+                <li data-lang="intro-fishing-pc"><strong>PC端通用操作</strong>：左右方向键移动（长按持续移动），Enter键下钩</li>
+                <li data-lang="intro-fishing-touch"><strong>触屏(希沃白板)操作</strong>：点击屏幕左右侧移动，点击Jimmy图标下钩</li>
+            </ul>
 
-<h4>2. 飞镖挑战</h4>
-<p>发射飞镖打中目标得分，注意避开小马（击中会扣分）</p>
+            <h4 data-lang="intro-darts">2. 飞镖挑战</h4>
+            <p data-lang="intro-darts-desc">发射飞镖打中目标得分，注意避开小马（击中会扣分）</p>
 
-<h4>3. PvP对战模式</h4>
-<h5>基础操作方式</h5>
-<ul>
-    <li><strong>WASD</strong>：
-        <ul>
-            <li>移动：W/A/S/D</li>
-            <li>横激光：E | 纵激光：C</li>
-            <li>防御：Q | 开炮：X</li>
-        </ul>
-    </li>
-    <li><strong>方向键</strong>：
-        <ul>
-            <li>移动：↑/↓/←/→</li>
-            <li>横激光：PageUp | 纵激光：PageDown</li>
-            <li>防御：右Ctrl | 开炮：右Alt</li>
-        </ul>
-    </li>
-</ul>
+            <h4 data-lang="intro-pvp">3. PvP对战模式</h4>
+            <h5 data-lang="intro-pvp-controls">基础操作方式</h5>
+            <ul>
+                <li>
+                    <span data-lang="intro-pvp-wasd-title"><strong>WASD</strong>：</span>
+                    <ul>
+                        <li data-lang="intro-pvp-wasd-move">移动：W/A/S/D</li>
+                        <li data-lang="intro-pvp-wasd-laser">横激光：E | 纵激光：C</li>
+                        <li data-lang="intro-pvp-wasd-defense">防御：Q | 开炮：X</li>
+                    </ul>
+                </li>
+                <li>
+                    <span data-lang="intro-pvp-arrows-title"><strong>方向键</strong>：</span>
+                    <ul>
+                        <li data-lang="intro-pvp-arrows-move">移动：↑/↓/←/→</li>
+                        <li data-lang="intro-pvp-arrows-laser">横激光：PageUp | 纵激光：PageDown</li>
+                        <li data-lang="intro-pvp-arrows-defense">防御：右Ctrl | 开炮：右Alt</li>
+                    </ul>
+                </li>
+            </ul>
 
-<h5>P.S. 联机对战步骤</h5>
-<ol>
-    <li>双方协商确定：
-        <ul>
-            <li>角色分配（Jimmy/ZDY）</li>
-            <li>网络连接方式（主机/客户端）</li>
-        </ul>
-    </li>
-    <li>选择操作方式（选哪个操作方式与选的角色无关）</li>
-    <li>主机进入等待状态（显示为未响应属正常现象）</li>
-    <li>客户端输入主机显示的IP地址</li>
-    <li>连接成功后即可开始对战</li>
-</ol>
+            <h4 data-lang="intro-fishing-machine">4. 摸鱼机</h4>
+            <ul>
+                <li data-lang="intro-fishing-machine-move"><strong>移动控制</strong>：WASD/方向键</li>
+                <li>
+                    <span data-lang="intro-fishing-machine-core-title"><strong>核心机制</strong>：</span>
+                    <ul>
+                        <li data-lang="intro-fishing-machine-core-1">收集鱼类增加负载，返家转换负载为分数</li>
+                        <li data-lang="intro-fishing-machine-core-2">安全机制：在家无敌状态，可"退！！"水雷</li>
+                    </ul>
+                </li>
+                <li>
+                    <span data-lang="intro-fishing-machine-dangers-title"><strong>危险提示</strong>：</span>
+                    <ul>
+                        <li data-lang="intro-fishing-machine-dangers-1">水雷（移动型）：触碰扣1血</li>
+                        <li data-lang="intro-fishing-machine-dangers-2">潜水艇（固定型）：直接送走</li>
+                        <li data-lang="intro-fishing-machine-dangers-3">鲨鱼：重置生命值并强制返家</li>
+                        <li data-lang="intro-fishing-machine-dangers-4">水草（边缘区域）：直接送走</li>
+                    </ul>
+                </li>
+                <li>
+                    <span data-lang="intro-fishing-machine-powerups-title"><strong>增益道具</strong>：</span>
+                    <ul>
+                        <li data-lang="intro-fishing-machine-powerups-1">金钟罩：加1血</li>
+                        <li data-lang="intro-fishing-machine-powerups-2">增氧装置：增大人工鱼塘K值</li>
+                    </ul>
+                </li>
+            </ul>
 
-<h4>4. 摸鱼机</h4>
-<ul>
-    <li><strong>移动控制</strong>：WASD/方向键</li>
-    <li><strong>核心机制</strong>：
-        <ul>
-            <li>收集鱼类增加负载，返家转换负载为分数</li>
-            <li>安全机制：在家无敌状态，可“退！！”水雷</li>
-        </ul>
-    </li>
-    <li><strong>危险提示</strong>：
-        <ul>
-            <li>水雷（移动型）：触碰扣1血</li>
-            <li>潜水艇（固定型）：直接送走</li>
-            <li>鲨鱼：重置生命值并强制返家</li>
-            <li>水草（边缘区域）：直接送走</li>
-        </ul>
-    </li>
-    <li><strong>增益道具</strong>：
-        <ul>
-            <li>金钟罩：加1血</li>
-            <li>增氧装置：增大人工鱼塘K值</li>
-        </ul>
-    </li>
-</ul>
+            <h4 data-lang="intro-store">5. 娲石百货</h4>
+            <p data-lang="intro-store-desc">好东西多多</p>
 
-<h4>5. 娲石百货</h4>
-<p>好东西多多</p>
+            <!-- 新增游戏介绍部分 -->
+            <h4 data-lang="intro-jump">6. 跳一跳</h4>
+            <p data-lang="intro-jump-desc">游戏内容：躲开地上的同学们和天上的老师们，或者坐飞机开炮打跑他们</p>
+            <h5 data-lang="intro-jump-controls">操作方式</h5>
+            <ul>
+                <li data-lang="intro-jump-pc"><strong>PC端</strong>：W/上箭头挑起，按的时间越长跳得越高；S/下箭头遁地；在天上C键坐飞机，W/上箭头上升，左键开炮</li>
+                <li data-lang="intro-jump-touch"><strong>触屏</strong>：点击屏幕跳起</li>
+            </ul>
+            <p data-lang="intro-jump-note">注意：遁地不能躲开同学；每走一段距离加飞机燃料；飞机燃料耗尽自动坠机；飞机不升则降；炮弹是激光制导。</p>
 
-<h3>重要须知</h3>
-<ul>
-    <li>本游戏严禁任何形式转载或二次发布</li>
-    <li>序列号获取：通过B站私信联系@Micropuppy</li>
-</ul>
+            <h4 data-lang="intro-bomber">7. 炸弹人</h4>
+            <p data-lang="intro-bomber-desc">游戏内容：两个玩家通过放炸弹炸开墙壁，获得道具，炸死对方</p>
+            <h5 data-lang="intro-bomber-controls">操作方式</h5>
+            <ul>
+                <li data-lang="intro-bomber-p1"><strong>玩家一（左上角）</strong>：WASD移动，空格放炸弹，C加载/卸载核弹，X开铁幕</li>
+                <li data-lang="intro-bomber-p2"><strong>玩家二（右下角）</strong>：上下左右移动，回车放炸弹，M加载/卸载核弹，N开铁幕</li>
+            </ul>
+            <p data-lang="intro-bomber-tips">提示：蓝墙炸后得道具，其中亮绿色是弹药，白色是范围，红色是血量，深绿色是核弹，黑色是铁幕；铁幕5秒内无敌，核弹范围巨大；每隔一段时间刷蓝墙</p>
 
-<p>按ESC键随时返回主菜单。</p>
+
+            <h5 data-lang="intro-pvp-steps">P.S. 联机对战步骤</h5>
+            <ol>
+                <li data-lang="intro-pvp-step1">
+                    双方协商确定：
+                    <ul>
+                        <li data-lang="intro-pvp-step1-1">角色分配（Jimmy/ZDY）</li>
+                        <li data-lang="intro-pvp-step1-2">网络连接方式（主机/客户端）</li>
+                    </ul>
+                </li>
+                <li data-lang="intro-pvp-step2">选择操作方式（选哪个操作方式与选的角色无关）</li>
+                <li data-lang="intro-pvp-step3">主机进入等待状态（显示为未响应属正常现象）</li>
+                <li data-lang="intro-pvp-step4">客户端输入主机显示的IP地址</li>
+                <li data-lang="intro-pvp-step5">连接成功后即可开始对战</li>
+            </ol>
+
+
+            <h3 data-lang="intro-notice">重要须知</h3>
+            <ul>
+                <li data-lang="intro-notice-1">本游戏严禁任何形式转载或二次发布</li>
+                <li data-lang="intro-notice-2">序列号获取：通过B站私信联系@Micropuppy</li>
+            </ul>
+
+            <p data-lang="intro-esc">按ESC键随时返回主菜单。</p>
+        </section>
     </section>
     <section id="features" class="features">
-        <h2>游戏特色</h2>
+        <h2 data-lang="features-title">游戏特色</h2>
         <ul>
-            <li>😝 抽象但具体的体验：丰富的帅照与阳光的表情比比皆是！</li>
-            <li>🎮 简单易上手的操作：适合所有年龄段的玩家！</li>
-            <li>🐔 麻雀虽小五脏俱全：该有的都有，且触手可得！</li>
-            <li>🎆 丰富而实用的商品：买吃喝，买纸飞机，卖鱼得钱！</li>
-            <li>🏆 充满趣味的小游戏：钓鱼飞镖，摸鱼PvP！</li>
+            <li data-lang="features-1">😝 抽象但具体的体验：丰富的帅照与阳光的表情比比皆是！</li>
+            <li data-lang="features-2">🎮 简单易上手的操作：适合所有年龄段的玩家！</li>
+            <li data-lang="features-3">🐔 麻雀虽小五脏俱全：该有的都有，且触手可得！</li>
+            <li data-lang="features-4">🎆 丰富而实用的商品：买吃喝，买纸飞机，卖鱼得钱！</li>
+            <li data-lang="features-5">🏆 充满趣味的小游戏：钓鱼飞镖，摸鱼PvP！</li>
         </ul>
     </section>
 
     <section id="screenshots" class="screenshots">
-        <h2>游戏截图</h2>
-        <img src="/img/intro.jpg" alt="主界面">
-        <img src="/img/funct.jpg" alt="功能页">
-        <img src="/img/shop.jpg" alt="商店页">
-        <img src="/img/cus.jpg" alt="自定义面板">
-        <img src="/img/fish.jpg" alt="钓鱼">
-        <img src="/img/plane.jpg" alt="飞镖 1">
-        <img src="/img/xiaoma.jpg" alt="飞镖 2">
-        <img src="/img/pvp.jpg" alt="PvP 1">
-        <img src="/img/pvppao.jpg" alt="PvP 2">
-        <img src="/img/moyuji.jpg" alt="摸鱼机 1">
-        <img src="/img/selectm.jpg" alt="摸鱼机 2">
-        <img src="/img/gaming.jpg" alt="摸鱼机 3">
+        <h2 data-lang="screenshots-title">游戏截图</h2>
+        <div class="screenshot-container">
+            <img src="img/1.jpg" alt="主界面" onclick="openModal(this)">
+        </div>
+        <div class="screenshot-container">
+            <img src="img/3.jpg" alt="功能页" onclick="openModal(this)">
+        </div>
+        <div class="screenshot-container">
+            <img src="img/2.jpg" alt="商店页" onclick="openModal(this)">
+        </div>
+        <div class="screenshot-container">
+            <img src="img/4.jpg" alt="自定义面板" onclick="openModal(this)">
+        </div>
+        <div class="screenshot-container">
+            <img src="img/5.jpg" alt="钓鱼" onclick="openModal(this)">
+        </div>
+        <div class="screenshot-container">
+            <img src="img/6.jpg" alt="飞镖" onclick="openModal(this)">
+        </div>
+        <div class="screenshot-container">
+            <img src="img/9.jpg" alt="PvP 1" onclick="openModal(this)">
+        </div>
+        <div class="screenshot-container">
+            <img src="img/10.jpg" alt="PvP 2" onclick="openModal(this)">
+        </div>
+        <div class="screenshot-container">
+            <img src="img/7.jpg" alt="摸鱼机 1" onclick="openModal(this)">
+        </div>
+        <div class="screenshot-container">
+            <img src="img/8.jpg" alt="摸鱼机 2" onclick="openModal(this)">
+        </div>
+        <div class="screenshot-container">
+            <img src="img/11.jpg" alt="跳一跳" onclick="openModal(this)">
+        </div>
+        <div class="screenshot-container">
+            <img src="img/12.jpg" alt="炸弹人 1" onclick="openModal(this)">
+        </div>
+        <div class="screenshot-container">
+            <img src="img/B.jpg" alt="炸弹人 2" onclick="openModal(this)">
+        </div>
     </section>
 
     <section id="testimonials" class="testimonials">
-        <h2>玩家评价</h2>
+        <h2 data-lang="testimonials-title">玩家评价</h2>
         <div class="quote">
-            <p>“哈哈哈哈哈哈哈哈哈哈哈……”</p>
-            <span class="author">—— 朱航</span>
+            <p data-lang="testimonial-1">"哈哈哈哈哈哈哈哈哈哈哈……"</p>
+            <span class="author" data-lang="testimonial-author-1">—— 朱航</span>
         </div>
         <div class="quote">
-            <p>“6”</p>
-            <span class="author">—— Kira</span>
+            <p data-lang="testimonial-2">"6"</p>
+            <span class="author" data-lang="testimonial-author-2">—— Kira</span>
         </div>
         <div class="quote">
-            <p>“太有实力了”</p>
-            <span class="author">—— Nomo.</span>
+            <p data-lang="testimonial-3">"太有实力了"</p>
+            <span class="author" data-lang="testimonial-author-3">—— Nomo.</span>
         </div>
     </section>
 
     <section id="download" class="download">
-        <h2>下载方式</h2>
-        <p>立即下载《Jimmy钓鱼机》，开始与2026届小班互动！</p>
-        <a href="https://github.com/MicropuppyGoForward/Jimmy/releases" download>点击这里下载</a>
-        <a href="https://wwyn.lanzout.com/id0t530os3mb" download>蓝奏云(密码2026)</a>
+        <h2 data-lang="download-title">下载方式</h2>
+        <p data-lang="download-desc">立即下载《Jimmy钓鱼机》，开始与2026届小班互动！</p>
+        <a href="https://github.com/MicropuppyGoForward/Jimmy/releases" download data-lang="download-github">GitHub主页</a>
+        <a href="https://wwyn.lanzout.com/iLdtk2tyqveh" download data-lang="download-lanzou">蓝奏云(密码2026)</a>
     </section>
+</div>
+
+<!-- 图片模态框 -->
+<div id="imageModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+    <div id="caption" class="caption"></div>
 </div>
 
 <footer>
     <p>&copy; 2025 Micropuppy. 版权所有.</p>
     <div class="social-links">
-        <a href="https://user.qzone.qq.com/190201740/main" target="_blank"><img src="/img/qzone.jpg" alt="QQ空间"></a>
-        <a href="https://github.com/MicropuppyGoForward/Jimmy" target="_blank"><img src="/img/github.jpg" alt="GitHub"></a>
+        <a href="https://user.qzone.qq.com/190201740/main" target="_blank"><img src="img/qzone.jpg" alt="QQ空间"></a>
+        <a href="https://github.com/MicropuppyGoForward/Jimmy" target="_blank"><img src="img/github.jpg" alt="GitHub"></a>
     </div>
 </footer>
+
 <!-- 新增脚本 -->
 <script>
-        // 金色粒子特效
-        class Particle {
-            constructor(canvas) {
-                this.canvas = canvas;
-                this.ctx = canvas.getContext('2d');
-                this.particles = [];
-                this.init();
-            }
+    // 语言设置
+    const translations = {
+        'zh-CN': {
+            // 原有翻译键保持不变
+            'title': 'Jimmy钓鱼机',
+            'welcome': '欢迎来到Jimmy钓鱼机的官方网站！',
+            'nav-intro': '游戏介绍',
+            'nav-features': '游戏特色',
+            'nav-screenshots': '游戏截图',
+            'nav-testimonials': '玩家评价',
+            'nav-download': '下载方式',
+            'intro-title': '游戏介绍',
+            'intro-welcome': '欢迎游玩Jimmy钓鱼机！',
+            'intro-copyright': '版权声明',
+            'intro-copyright-text': '© 2026 新洲一中阳逻校区小班版权所有<br />特别鸣谢：Jimmy的支持及一班全体同学的协力开发',
+            'intro-gameplay': '核心玩法说明',
+            'intro-fishing': '1. 钓鱼模式',
+            'intro-fishing-pc': '<strong>PC端通用操作</strong>：左右方向键移动（长按持续移动），Enter键下钩',
+            'intro-fishing-touch': '<strong>触屏(希沃白板)操作</strong>：点击屏幕左右侧移动，点击Jimmy图标下钩',
+            'intro-darts': '2. 飞镖挑战',
+            'intro-darts-desc': '发射飞镖打中目标得分，注意避开小马（击中会扣分）',
+            'intro-pvp': '3. PvP对战模式',
+            'intro-pvp-controls': '基础操作方式',
+            'intro-pvp-wasd': '<strong>WASD</strong>：',
+            'intro-pvp-wasd-move': '移动：W/A/S/D',
+            'intro-pvp-wasd-laser': '横激光：E | 纵激光：C',
+            'intro-pvp-wasd-defense': '防御：Q | 开炮：X',
+            'intro-pvp-wasd-title': '<strong>WASD</strong>：',
+            'intro-pvp-arrows-title': '<strong>方向键</strong>：',
+            'intro-fishing-machine-core-title': '<strong>核心机制</strong>：',
+            'intro-fishing-machine-dangers-title': '<strong>危险提示</strong>：',
+            'intro-fishing-machine-powerups-title': '<strong>增益道具</strong>：',
+            'intro-pvp-arrows': '<strong>方向键</strong>：',
+            'intro-pvp-arrows-move': '移动：↑/↓/←/→',
+            'intro-pvp-arrows-laser': '横激光：PageUp | 纵激光：PageDown',
+            'intro-pvp-arrows-defense': '防御：右Ctrl | 开炮：右Alt',
+            'intro-pvp-steps': 'P.S. 联机对战步骤',
+            'intro-pvp-step1': '双方协商确定：',
+            'intro-pvp-step1-1': '角色分配（Jimmy/ZDY）',
+            'intro-pvp-step1-2': '网络连接方式（主机/客户端）',
+            'intro-pvp-step2': '选择操作方式（选哪个操作方式与选的角色无关）',
+            'intro-pvp-step3': '主机进入等待状态（显示为未响应属正常现象）',
+            'intro-pvp-step4': '客户端输入主机显示的IP地址',
+            'intro-pvp-step5': '连接成功后即可开始对战',
+            'intro-fishing-machine': '4. 摸鱼机',
+            'intro-fishing-machine-move': '<strong>移动控制</strong>：WASD/方向键',
+            'intro-fishing-machine-core': '<strong>核心机制</strong>：',
+            'intro-fishing-machine-core-1': '收集鱼类增加负载，返家转换负载为分数',
+            'intro-fishing-machine-core-2': '安全机制：在家无敌状态，可"退！！"水雷',
+            'intro-fishing-machine-dangers': '<strong>危险提示</strong>：',
+            'intro-fishing-machine-dangers-1': '水雷（移动型）：触碰扣1血',
+            'intro-fishing-machine-dangers-2': '潜水艇（固定型）：直接送走',
+            'intro-fishing-machine-dangers-3': '鲨鱼：重置生命值并强制返家',
+            'intro-fishing-machine-dangers-4': '水草（边缘区域）：直接送走',
+            'intro-fishing-machine-powerups': '<strong>增益道具</strong>：',
+            'intro-fishing-machine-powerups-1': '金钟罩：加1血',
+            'intro-fishing-machine-powerups-2': '增氧装置：增大人工鱼塘K值',
+            'intro-store': '5. 娲石百货',
+            'intro-store-desc': '好东西多多',
+            // 新增的游戏翻译键
+            'intro-jump': '6. 跳一跳',
+            'intro-jump-desc': '游戏内容：躲开地上的同学们和天上的老师们，或者坐飞机开炮打跑他们',
+            'intro-jump-controls': '操作方式',
+            'intro-jump-pc': '<strong>PC端</strong>：W/上箭头挑起，按的时间越长跳得越高；S/下箭头遁地；在天上C键坐飞机，W/上箭头上升，左键开炮',
+            'intro-jump-touch': '<strong>触屏</strong>：点击屏幕跳起',
+            'intro-jump-note': '注意：遁地不能躲开同学；每走一段距离加飞机燃料；飞机燃料耗尽自动坠机；飞机不升则降；炮弹是激光制导。',
+            'intro-bomber': '7. 炸弹人',
+            'intro-bomber-desc': '游戏内容：两个玩家通过放炸弹炸开墙壁，获得道具，炸死对方',
+            'intro-bomber-controls': '操作方式',
+            'intro-bomber-p1': '<strong>玩家一（左上角）</strong>：WASD移动，空格放炸弹，C加载/卸载核弹，X开铁幕',
+            'intro-bomber-p2': '<strong>玩家二（右下角）</strong>：上下左右移动，回车放炸弹，M加载/卸载核弹，N开铁幕',
+            'intro-bomber-tips': '提示：蓝墙炸后得道具，其中亮绿色是弹药，白色是范围，红色是血量，深绿色是核弹，黑色是铁幕；铁幕5秒内无敌，核弹范围巨大；每隔一段时间刷蓝墙',
+            'intro-notice': '重要须知',
+            'intro-notice-1': '本游戏严禁任何形式转载或二次发布',
+            'intro-notice-2': '序列号获取：通过B站私信联系@Micropuppy',
+            'intro-esc': '按ESC键随时返回主菜单。',
+            'features-title': '游戏特色',
+            'features-1': '😝 抽象但具体的体验：丰富的帅照与阳光的表情比比皆是！',
+            'features-2': '🎮 简单易上手的操作：适合所有年龄段的玩家！',
+            'features-3': '🐔 麻雀虽小五脏俱全：该有的都有，且触手可得！',
+            'features-4': '🎆 丰富而实用的商品：买吃喝，买纸飞机，卖鱼得钱！',
+            'features-5': '🏆 充满趣味的小游戏：钓鱼飞镖，摸鱼PvP！',
+            'screenshots-title': '游戏截图',
+            'testimonials-title': '玩家评价',
+            'testimonial-1': '"哈哈哈哈哈哈哈哈哈哈哈……"',
+            'testimonial-author-1': '—— 朱航',
+            'testimonial-2': '"6"',
+            'testimonial-author-2': '—— Kira',
+            'testimonial-3': '"太有实力了"',
+            'testimonial-author-3': '—— Nomo.',
+            'download-title': '下载方式',
+            'download-desc': '立即下载《Jimmy钓鱼机》，开始与2026届小班互动！',
+            'download-github': 'GitHub主页',
+            'download-lanzou': '蓝奏云(密码2026)',
+            'download-direct': '直接下载'
+        },
+        'en-US': {
+            // 英文翻译保持不变
+            'title': 'Jimmy FM',
+            'welcome': 'Welcome to the official website of Jimmy FM!',
+            'nav-intro': 'Game Intro',
+            'nav-features': 'Features',
+            'nav-screenshots': 'Screenshots',
+            'nav-testimonials': 'Testimonials',
+            'nav-download': 'Download',
+            'intro-title': 'Game Introduction',
+            'intro-welcome': 'Welcome to Jimmy FM!',
+            'intro-copyright': 'Copyright Notice',
+            'intro-copyright-text': '© 2026 Xinzhou No.1 Middle School Yangluo Campus Class 1. All Rights Reserved.<br />Special Thanks: Jimmy\'s support and the collaborative development of all students in Class 1',
+            'intro-gameplay': 'Core Gameplay',
+            'intro-fishing': '1. Fishing Mode',
+            'intro-fishing-pc': '<strong>PC Controls</strong>: Left/Right arrow keys to move (hold to continue moving), Enter key to cast hook',
+            'intro-fishing-touch': '<strong>Touch Screen (Seewo Whiteboard) Controls</strong>: Tap left/right side of screen to move, tap Jimmy icon to cast hook',
+            'intro-darts': '2. Dart Challenge',
+            'intro-darts-desc': 'Launch darts to hit targets for points, avoid hitting the pony (will deduct points)',
+            'intro-pvp': '3. PvP Battle Mode',
+            'intro-pvp-controls': 'Basic Controls',
+            'intro-pvp-wasd': '<strong>WASD</strong>:',
+            'intro-pvp-wasd-move': 'Move: W/A/S/D',
+            'intro-pvp-wasd-laser': 'Horizontal Laser: E | Vertical Laser: C',
+            'intro-pvp-wasd-defense': 'Defense: Q | Fire: X',
+            'intro-pvp-arrows': '<strong>Arrow Keys</strong>:',
+            'intro-pvp-arrows-move': 'Move: ↑/↓/←/→',
+            'intro-pvp-arrows-laser': 'Horizontal Laser: PageUp | Vertical Laser: PageDown',
+            'intro-pvp-arrows-defense': 'Defense: Right Ctrl | Fire: Right Alt',
+            'intro-pvp-steps': 'P.S. Online Battle Steps',
+            'intro-pvp-step1': 'Both parties negotiate and determine:',
+            'intro-pvp-step1-1': 'Character assignment (Jimmy/ZDY)',
+            'intro-pvp-step1-2': 'Network connection method (Host/Client)',
+            'intro-pvp-step2': 'Select control method (control method selection is independent of character selection)',
+            'intro-pvp-step3': 'Host enters waiting state (showing as unresponsive is normal)',
+            'intro-pvp-step4': 'Client enters the IP address displayed by the host',
+            'intro-pvp-step5': 'Start battle after successful connection',
+            'intro-pvp-wasd-title': '<strong>WASD</strong>:',
+            'intro-pvp-arrows-title': '<strong>Arrow Keys</strong>:',
+            'intro-fishing-machine-core-title': '<strong>Core Mechanics</strong>:',
+            'intro-fishing-machine-dangers-title': '<strong>Danger Warnings</strong>:',
+            'intro-fishing-machine-powerups-title': '<strong>Power-ups</strong>:',
+            'intro-fishing-machine': '4. Fishing Machine',
+            'intro-fishing-machine-move': '<strong>Movement Controls</strong>: WASD/Arrow Keys',
+            'intro-fishing-machine-core': '<strong>Core Mechanics</strong>:',
+            'intro-fishing-machine-core-1': 'Collect fish to increase load, return home to convert load to score',
+            'intro-fishing-machine-core-2': 'Safety mechanism: Invincible at home, can "retreat!!" mines',
+            'intro-fishing-machine-dangers': '<strong>Danger Warnings</strong>:',
+            'intro-fishing-machine-dangers-1': 'Mines (mobile): Touch deducts 1 health',
+            'intro-fishing-machine-dangers-2': 'Submarines (stationary): Instant elimination',
+            'intro-fishing-machine-dangers-3': 'Sharks: Reset health and force return home',
+            'intro-fishing-machine-dangers-4': 'Seaweed (edge areas): Instant elimination',
+            'intro-fishing-machine-powerups': '<strong>Power-ups</strong>:',
+            'intro-fishing-machine-powerups-1': 'Golden Bell: +1 health',
+            'intro-fishing-machine-powerups-2': 'Oxygenator: Increases artificial fish pond K value',
+            'intro-store': '5. Washi Department Store',
+            'intro-store-desc': 'Many good things',
+            // 新增游戏的英文翻译
+            'intro-jump': '6. Jump Jump',
+            'intro-jump-desc': 'Game Content: Avoid classmates on the ground and teachers in the sky, or ride an airplane to shoot them away',
+            'intro-jump-controls': 'Controls',
+            'intro-jump-pc': '<strong>PC</strong>: W/Up Arrow to jump (longer press = higher jump); S/Down Arrow to dig underground; C key to ride airplane in the air, W/Up Arrow to ascend, left click to fire',
+            'intro-jump-touch': '<strong>Touch Screen</strong>: Tap screen to jump',
+            'intro-jump-note': 'Note: Digging cannot avoid classmates; airplane fuel increases with distance traveled; airplane crashes when fuel runs out; airplane descends if not ascending; projectiles are laser-guided.',
+            'intro-bomber': '7. Bomberman',
+            'intro-bomber-desc': 'Game Content: Two players place bombs to blow up walls, collect items, and defeat each other',
+            'intro-bomber-controls': 'Controls',
+            'intro-bomber-p1': '<strong>Player 1 (top left)</strong>: WASD to move, Space to place bomb, C to load/unload nuclear bomb, X to activate iron curtain',
+            'intro-bomber-p2': '<strong>Player 2 (bottom right)</strong>: Arrow keys to move, Enter to place bomb, M to load/unload nuclear bomb, N to activate iron curtain',
+            'intro-bomber-tips': 'Tips: Blue walls drop items when destroyed - bright green is ammo, white is range, red is health, dark green is nuclear bomb, black is iron curtain; Iron curtain provides 5 seconds of invincibility; Nuclear bombs have huge explosion range; Blue walls respawn periodically',
+            'intro-notice': 'Important Notice',
+            'intro-notice-1': 'This game strictly prohibits any form of reprinting or secondary distribution',
+            'intro-notice-2': 'To obtain serial number: Contact @Micropuppy via B站 private message',
+            'intro-esc': 'Press ESC key to return to main menu at any time.',
+            'features-title': 'Game Features',
+            'features-1': '😝 Abstract yet concrete experience: Abundant handsome photos and sunny expressions everywhere!',
+            'features-2': '🎮 Simple and easy-to-learn controls: Suitable for players of all ages!',
+            'features-3': '🐔 Small but complete: Everything you need is available and within reach!',
+            'features-4': '🎆 Rich and practical items: Buy food and drinks, buy paper airplanes, sell fish for money!',
+            'features-5': '🏆 Fun mini-games: Fishing darts, fishing PvP!',
+            'screenshots-title': 'Game Screenshots',
+            'testimonials-title': 'Player Testimonials',
+            'testimonial-1': '"Hahahahahahahahahaha..."',
+            'testimonial-author-1': '—— Zhu Hang',
+            'testimonial-2': '"6"',
+            'testimonial-author-2': '—— Kira',
+            'testimonial-3': '"So powerful"',
+            'testimonial-author-3': '—— Nomo.',
+            'download-title': 'Download',
+            'download-desc': 'Download "Jimmy FM" now and start interacting with the 2026 class 1!',
+            'download-github': 'GitHub Page',
+            'download-lanzou': 'LanZou Cloud (Password 2026)',
+            'download-direct': 'Direct Download'
+        }
+    };
 
-            init() {
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
-                
-                // 粒子参数设置
-                for(let i = 0; i < 150; i++) {
-                    this.particles.push({
-                        x: Math.random() * this.canvas.width,
-                        y: Math.random() * this.canvas.height,
-                        size: Math.random() * 2.5 + 0.5,
-                        speedX: (Math.random() - 0.5) * 0.4,
-                        speedY: (Math.random() - 0.5) * 0.4
-                    });
+    let currentLang = 'zh-CN';
+
+    // 切换语言函数
+    function toggleLanguage() {
+        currentLang = currentLang === 'zh-CN' ? 'en-US' : 'zh-CN';
+        document.getElementById('languageBtn').textContent = currentLang === 'zh-CN' ? 'English' : '中文';
+        applyLanguage(currentLang);
+        
+        // 保存语言偏好
+        localStorage.setItem('preferredLanguage', currentLang);
+    }
+
+    // 应用语言
+    function applyLanguage(lang) {
+        const elements = document.querySelectorAll('[data-lang]');
+        elements.forEach(element => {
+            const key = element.getAttribute('data-lang');
+            if (translations[lang][key]) {
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    element.value = translations[lang][key];
+                } else {
+                    element.innerHTML = translations[lang][key];
                 }
-                this.animate();
             }
+        });
+    }
 
-            resize() {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-            }
+    // 图片模态框功能
+    function openModal(element) {
+        document.getElementById('modalImage').src = element.src;
+        document.getElementById('caption').textContent = element.alt;
+        document.getElementById('imageModal').style.display = "block";
+    }
 
-            animate() {
-                // 填充背景色
-                this.ctx.fillStyle = '#93D5DC';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                this.particles.forEach(particle => {
-                    // 更新位置
-                    particle.x += particle.speedX;
-                    particle.y += particle.speedY;
+    function closeModal() {
+        document.getElementById('imageModal').style.display = "none";
+    }
 
-                    // 边界反弹
-                    if(particle.x < 0 || particle.x > this.canvas.width) particle.speedX *= -1;
-                    if(particle.y < 0 || particle.y > this.canvas.height) particle.speedY *= -1;
+    // 点击模态框外部关闭
+    window.onclick = function(event) {
+        const modal = document.getElementById('imageModal');
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
 
-                    // 创建渐变效果
-                    const gradient = this.ctx.createRadialGradient(
-                        particle.x, particle.y, 0,
-                        particle.x, particle.y, particle.size * 2
-                    );
-                    gradient.addColorStop(0, 'rgba(255,215,50,0.8)');
-                    gradient.addColorStop(1, 'rgba(255,215,50,0.1)');
+    // 金色粒子特效
+    class Particle {
+        constructor(canvas) {
+            this.canvas = canvas;
+            this.ctx = canvas.getContext('2d');
+            this.particles = [];
+            this.init();
+        }
 
-                    // 绘制粒子
-                    this.ctx.beginPath();
-                    this.ctx.fillStyle = gradient;
-                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                    this.ctx.fill();
+        init() {
+            this.resize();
+            window.addEventListener('resize', () => this.resize());
+            
+            // 粒子参数设置
+            for(let i = 0; i < 150; i++) {
+                this.particles.push({
+                    x: Math.random() * this.canvas.width,
+                    y: Math.random() * this.canvas.height,
+                    size: Math.random() * 2.5 + 0.5,
+                    speedX: (Math.random() - 0.5) * 0.4,
+                    speedY: (Math.random() - 0.5) * 0.4
                 });
+            }
+            this.animate();
+        }
 
-                requestAnimationFrame(() => this.animate());
+        resize() {
+            this.canvas.width = window.innerWidth;
+            this.canvas.height = window.innerHeight;
+        }
+
+        animate() {
+            // 填充背景色
+            this.ctx.fillStyle = '#93D5DC';
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            
+            this.particles.forEach(particle => {
+                // 更新位置
+                particle.x += particle.speedX;
+                particle.y += particle.speedY;
+
+                // 边界反弹
+                if(particle.x < 0 || particle.x > this.canvas.width) particle.speedX *= -1;
+                if(particle.y < 0 || particle.y > this.canvas.height) particle.speedY *= -1;
+
+                // 创建渐变效果
+                const gradient = this.ctx.createRadialGradient(
+                    particle.x, particle.y, 0,
+                    particle.x, particle.y, particle.size * 2
+                );
+                gradient.addColorStop(0, 'rgba(255,215,50,0.8)');
+                gradient.addColorStop(1, 'rgba(255,215,50,0.1)');
+
+                // 绘制粒子
+                this.ctx.beginPath();
+                this.ctx.fillStyle = gradient;
+                this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                this.ctx.fill();
+            });
+
+            requestAnimationFrame(() => this.animate());
+        }
+    }
+
+    // 初始化
+    window.addEventListener('DOMContentLoaded', () => {
+        // 启动粒子系统
+        new Particle(document.getElementById('canvas-bg'));
+
+        // 章节滚动动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // 导航指示器
+        const navLinks = document.querySelectorAll('nav a');
+        const indicator = document.createElement('div');
+        indicator.className = 'nav-indicator';
+        document.querySelector('nav').appendChild(indicator);
+
+        function updateIndicator() {
+            const activeLink = [...navLinks].find(link => 
+                link.getAttribute('href') === `#${location.hash.slice(1)}`
+            );
+            
+            if(activeLink) {
+                indicator.style.width = `${activeLink.offsetWidth}px`;
+                indicator.style.left = `${activeLink.offsetLeft}px`;
             }
         }
 
-        // 初始化特效
-        window.addEventListener('DOMContentLoaded', () => {
-            // 启动粒子系统
-            new Particle(document.getElementById('canvas-bg'));
+        navLinks.forEach(link => link.addEventListener('click', updateIndicator));
+        window.addEventListener('hashchange', updateIndicator);
+        updateIndicator();
 
-            // 章节滚动动画
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if(entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                    }
-                });
-            }, { threshold: 0.2 });
-
-            document.querySelectorAll('section').forEach(section => {
-                observer.observe(section);
-            });
-
-            // 导航指示器
-            const navLinks = document.querySelectorAll('nav a');
-            const indicator = document.createElement('div');
-            indicator.className = 'nav-indicator';
-            document.querySelector('nav').appendChild(indicator);
-
-            function updateIndicator() {
-                const activeLink = [...navLinks].find(link => 
-                    link.getAttribute('href') === `#${location.hash.slice(1)}`
-                );
-                
-                if(activeLink) {
-                    indicator.style.width = `${activeLink.offsetWidth}px`;
-                    indicator.style.left = `${activeLink.offsetLeft}px`;
-                }
-            }
-
-            navLinks.forEach(link => link.addEventListener('click', updateIndicator));
-            window.addEventListener('hashchange', updateIndicator);
-            updateIndicator();
-        });
-    </script>
+        // 语言切换按钮事件
+        document.getElementById('languageBtn').addEventListener('click', toggleLanguage);
+        
+        // 检查保存的语言偏好
+        const savedLang = localStorage.getItem('preferredLanguage');
+        if (savedLang) {
+            currentLang = savedLang;
+            document.getElementById('languageBtn').textContent = currentLang === 'zh-CN' ? 'EN' : '中文';
+            applyLanguage(currentLang);
+        }
+    });
+</script>
 </body>
 </html>
