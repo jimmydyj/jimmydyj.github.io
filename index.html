@@ -563,10 +563,17 @@
     </section>
 
     <section id="download" class="download">
-        <h2 data-lang="download-title">下载方式</h2>
-        <p data-lang="download-desc">立即下载《Jimmy钓鱼机》，开始与2026届小班互动！</p>
-        <a href="https://github.com/MicropuppyGoForward/Jimmy/releases" download data-lang="download-github">GitHub主页</a>
-        <a href="https://wwyn.lanzout.com/iLdtk2tyqveh" download data-lang="download-lanzou">蓝奏云(密码2026)</a>
+    <h2 data-lang="download-title">下载方式</h2>
+    <p data-lang="download-desc">立即下载《Jimmy钓鱼机》，开始与2026届小班互动！</p>
+
+    <!-- 将原来的 <a> 改为 <button>，移除 href，增加 onclick -->
+    <button class="btn-github" onclick="showClosed()">GitHub主页</button>
+    <button class="btn-lanzou" onclick="showClosed()">蓝奏云(密码2026)</button>
+
+    <!-- 提示消息（默认隐藏） -->
+    <div id="downloadToast" style="display:none; margin-top:1.5rem; padding:0.5rem 1rem; background:#fee; border-radius:30px; color:#b00; font-weight:500;">
+        🚫 已关闭下载渠道
+    </div>
     </section>
 </div>
 
